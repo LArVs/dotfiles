@@ -20,9 +20,6 @@ _loads \
 	~/.bash_profile \
 	~/.bash_aliases \
 
-_file=~/.bash_aliases; if [ -f "$_file" ]; then . "$_file"; fi
-_file=~/.bash_profile; if [ -f "$_file" ]; then . "$_file"; fi
-
 if ! shopt -oq posix; then
 	_load /etc/bash_completion
 fi
