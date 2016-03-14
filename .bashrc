@@ -12,8 +12,10 @@ IS_BASH_RC=1
 # bash lib
 . ~/.bash_lib
 
-HOME=$( readlink -f ~ )
-_echo -e "\t-- home: '$HOME'"
+if [ -z "$HOME" ]; then
+	HOME=$( readlink -f ~ )
+	_echo -e "\t-- home: '$HOME'"
+fi
 
 # load bash modules
 _loads \
