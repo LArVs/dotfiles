@@ -41,7 +41,7 @@ function _export {
 	fi
 }
 
-declare -A IS_LOAD
+declare -a IS_LOAD
 function _load {
 	local _item=$1 _name=$2 _is=
 	[ -n "$_name" ] && _is=IS_${_name}_LOAD
