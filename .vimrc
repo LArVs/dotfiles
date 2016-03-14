@@ -94,7 +94,7 @@ set smartcase
 set wrap
 set wrapmargin=8
 set textwidth=0
-set formatoptions-=o    " dont continue comments when pushing o/O
+set formatoptions-=ot   " dont continue comments when pushing o/O; dnt auto-wrap
 set linebreak           " Перенос не разрывая слов
 set linespace=1         " add some line space for easy reading
 set scrolloff=999       " focus mode like in Writer app http://www.iawriter.com/
