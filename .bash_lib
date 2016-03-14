@@ -1,76 +1,5 @@
-# DEBUG
-# IS_BASH_DEBUG=1
-
-[ -n "$IS_BASH_DEBUG" ] && echo '-- rc'
-
-# If not running interactively, don't do anything
-[ -z "$PS1" ] && return
-
-[ -z "$IS_BASH_RELOAD" ] && [ -n "$IS_BASH_RC" ] && return
-IS_BASH_RC=1
-
-HOME=$( readlink -f ~ )
-[ -n "$IS_BASH_DEBUG" ] && echo -e "\t-- home: '$HOME'"
-
-# make less more friendly for non-text input files, see lesspipe(1)
-[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
-
-# set variable identifying the chroot you work in (used in the prompt below)
-if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
-    debian_chroot=$(cat /etc/debian_chroot)
-fi
-
-# set a fancy prompt (non-color, unless we know we "want" color)
-case "$TERM" in
-    xterm-color) color_prompt=yes;;
-esac
-
-# uncomment for a colored prompt, if the terminal has the capability; turned
-# off by default to not distract the user: the focus in a terminal window
-# should be on the output of commands, not on the prompt
-force_color_prompt=yes
-
-if [ -n "$force_color_prompt" ]; then
-    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-	# We have color support; assume it's compliant with Ecma-48
-	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-	# a case would tend to support setf rather than setaf.)
-		color_prompt=yes
-	else
-		color_prompt=
-    fi
-fi
-
-if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
-fi
-unset color_prompt force_color_prompt
-
-# If this is an xterm set the title to user@host:dir
-case "$TERM" in
-	xterm*|rxvt*)
-		PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-		;;
-	*)
-		;;
-esac
-
-# enable color support of ls and also add handy aliases
-if [ -x /usr/bin/dircolors ]; then
-	test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-	alias ls='ls --color=auto'
-	#alias dir='dir --color=auto'
-	#alias vdir='vdir --color=auto'
-	alias grep='grep --color=auto'
-	alias fgrep='fgrep --color=auto'
-	alias egrep='egrep --color=auto'
-fi
-
-# Add an "alert" alias for long running commands.  Use like so:
-#   sleep 10; alert
-alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+[ -z "$IS_BASH_RELOAD" ] && [ -n "$IS_BASH_LIB" ] && return
+IS_BASH_LIB=1
 
 # load script
 function _echo {
@@ -79,6 +8,7 @@ function _echo {
 	if [ $# -gt 1 ]; then _option=$1; shift; fi
 	echo $_option "$@"
 }
+
 # set export
 function _export {
 	local _name=$1 _value=$2;
@@ -90,6 +20,7 @@ function _export {
 		_echo " - fail"
 	fi
 }
+
 declare -A IS_LOAD
 function _load {
 	local _item=$1 _name=$2 _is=
@@ -107,10 +38,12 @@ function _load {
 		_echo " - already"
 	fi
 }
+
 function _loads {
 	local _item=$@ _i;
 	for _i in $_item; do _load $_i; done
 }
+
 # set path
 function _path {
 	local _item=$1;
@@ -122,70 +55,10 @@ function _path {
 		_echo " - fail"
 	fi
 }
+
 function _paths {
 	local _item=$@ _i;
 	for _i in $_item; do _path $_i; done
 }
 
-# load bash modules
-_loads \
-	~/.bash_profile \
-	~/.bash_aliases \
-	~/.bash_git \
-
-# enable programmable completion features (you don't need to enable
-# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
-# sources /etc/bash.bashrc).
-if ! shopt -oq posix; then
-	_load /etc/bash_completion
-fi
-
-##### ruby
-# rvm global
-_load /etc/profile.d/rvm.sh RVM
-# rvm local
-# PATH=$PATH:$HOME/.rvm/bin
-# _load "$HOME/.rvm/scripts/rvm"
-
-# node version manager
-_export NVM_DIR $HOME/.nvm
-_load $NVM_DIR/nvm.sh
-
-##### PATH
-if [ -z "$IS_PATH" ]; then
-
-_paths $HOME/bin $HOME/bin/sh
-
-# composer
-_path /usr/local/share/composer/vendor/bin
-
-# go lang
-GOROOT='/usr/local/go'
-GOBIN="$GOROOT/bin"
-GOPATH="$HOME/go"
-_path $GOBIN
-_path $GOPATH/bin
-_export GOPATH $GOPATH
-# _export GOROOT $GOROOT
-# _export GOBIN $GOBIN
-
-# android
-_paths \
-	$HOME/Android/Sdk/tools/ \
-	$HOME/Android/Sdk/platform-tools/ \
-	/opt/android-studio/bin/ \
-	$HOME/java/idea-IC/bin/ \
-
-# Genymotion: android emulator
-_path $HOME/genymotion/
-
-PATH=$_PATH:$PATH
-export PATH
-export IS_PATH=1
-
-fi
-##### finish update PATH
-
-# php: composer
-_export COMPOSER_HOME /usr/local/share/composer
-
+# vim: ft=sh
