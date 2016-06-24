@@ -1,0 +1,99 @@
+[ -n "$IS_BASH_DEBUG" ] && echo '-- git'
+
+[ -z "$IS_BASH_RELOAD" ] && [ -n "$IS_BASH_GIT" ] && return
+IS_BASH_GIT=1
+
+# Git colot by LArV
+# Configure colors, if available.
+if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+	#a_reset=$(tput sgr0)
+	#a_bold=$(tput bold)
+	a_reset='\[\e[0m\]'
+	# color: 0 = black; 1 = red; 2 = green; 3 = yellow; 4 = blue; 5 = purple; 6 = cyan; 7 = light gray;
+		# $(tput setaf 1) - red
+		# $(tput setaf 1) - yellow
+		# $(tput sgr0)    - reset
+		# with tput, fail work term
+	# normal
+	c_red='\[\e[0;31m\]'
+	c_green='\[\e[0;32m\]'
+	c_yellow='\[\e[0;33m\]'
+	c_blue='\[\e[0;34m\]'
+	c_magenta='\[\e[0;35m\]'
+	c_cyan='\[\e[0;36m\]'
+	c_light_gray='\[\e[0;37m\]'
+	# bold
+	b_c_red='\[\e[1;31m\]'
+	b_c_green='\[\e[1;32m\]'
+	b_c_yellow='\[\e[1;33m\]'
+	b_c_blue='\[\e[1;34m\]'
+	b_c_magenta='\[\e[1;35m\]'
+	b_c_cyan='\[\e[1;36m\]'
+	b_c_light_gray='\[\e[1;37m\]'
+else
+	a_reset=
+	a_bold=
+	c_red=
+	c_green=
+	c_yellow=
+	c_blue=
+	c_magenta=
+	c_cyan=
+	c_light_gray=
+	b_c_red=
+	b_c_green=
+	b_c_yellow=
+	b_c_blue=
+	b_c_magenta=
+	b_c_cyan=
+	b_c_light_gray=
+fi
+
+function prompt_user {
+	_user=$(whoami)
+	if [[ "${_user}" == 'root' ]]; then
+		_user=${b_c_red}${_user}${a_reset}
+	else
+		_user=${c_red}${_user}${a_reset}
+	fi
+	echo -en ${_user}
+}
+
+function parse_git_dirty {
+	#[[ $(git status 2> /dev/null | tail -n1) != "nothing to commit (working directory clean)" ]] && echo "1"
+	#if ! git rev-parse --git-dir > /dev/null 2>&1; then
+	#if git diff --quiet 2>/dev/null >&2; then
+	if [[ $(git status 2> /dev/null | tail -n1 | cut -d' ' -f1) == "nothing" ]]; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+function parse_git_branch {
+	#_branch=`git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \([^\s]*\)/\1/"`
+	_branch=$(git branch --no-color 2>/dev/null | sed -n '/^\*/s/^\* //p')
+
+	if [ -n "$_branch" ]; then
+		parse_git_dirty; _modif=$?
+		case $_modif in
+			1) _color="${b_c_red}" ;;
+			*) _color="${c_yellow}" ;;
+		esac
+		_out="${a_reset}[${_color}${_branch}${a_reset}]"
+		echo -en "${_out}"
+	fi
+	}
+
+function set_prompt {
+	#PS1="${c_red}\u${a_reset}@${c_cyan}\h${a_reset} ${c_green}\w${a_reset} $(parse_git_branch)\$ "
+	export PS1="${a_reset}$(prompt_user)${c_yellow}@${c_cyan}\h ${c_green}\w $(parse_git_branch)${a_reset} \$ "
+}
+#PS1='\u@\h ${c_green}\w${a_reset}$(parse_git_branch)\$ ' # not work esc
+#PS1="\u@\h ${c_green}\w${a_reset}$(parse_git_branch)\$ " # not work function
+#PROMPT_COMMAND1='PS1="\u@\h ${c_green}\w${a_reset}$(parse_git_branch)\$ "'
+
+export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'} set_prompt"
+
+# vim: ft=sh
+

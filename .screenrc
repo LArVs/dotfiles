@@ -1,0 +1,35 @@
+# Turn off start message:
+startup_message off
+
+# Set messages timeout to one second:
+msgminwait 2
+msgwait 5
+
+# keep scrollback n lines
+defscrollback 20000
+
+hardstatus on
+hardstatus alwayslastline
+
+termcapinfo xterm*|rxvt*|kterm*|Eterm* 'hs:ts=\E]0;:fs=\007:ds=\E]0;\007'
+termcapinfo xterm ti@:te@7
+
+# status line
+hardstatus string '%{= kG}[ %{G}%H ]%{g}[%= %{= kw}%?%-Lw%?%{r}(%{y}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][ %{B}%Y-%m-%d %{W}%c %{g}]'
+
+# defmousetrack on
+nethack on
+# vbell off
+
+
+# layout
+layout autosave on
+bind k focus up
+bind j focus down
+bind h focus prev
+bind l focus next
+bind H layout prev
+bind K layout prev
+bind L layout next
+bind J layout next
+
