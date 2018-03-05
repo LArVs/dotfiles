@@ -1,6 +1,8 @@
 [ -z "$IS_BASH_RELOAD" ] && [ -n "$IS_BASH_LIB" ] && return
 IS_BASH_LIB=1
 
+[ -n "$IS_BASH_DEBUG" ] && echo '-- bash_lib'
+
 function _is_exists {
 	if hash $1 2>/dev/null; then return 0; else return -1; fi
 }
@@ -30,7 +32,7 @@ function _echo {
 }
 
 # set export
-function _export {
+function __export {
 	local _name=$1 _value=$2
 	[ -n "$IS_BASH_DEBUG" ] && _echo -ne "\t-- export: '$_value'"
 	if [ -d "$_value" ]; then

@@ -1,5 +1,5 @@
 # DEBUG
-# IS_BASH_DEBUG=1
+ # IS_BASH_DEBUG=1
 
 [ -n "$IS_BASH_DEBUG" ] && echo '-- rc'
 
@@ -25,12 +25,12 @@ _loads \
 	~/.bash_aliases \
 
 if ! shopt -oq posix; then
-	_load /etc/bash_completion
+	_load /etc/bash_completion BASH_C_E
 fi
 
 
 if [ -n "$(brew --prefix)" ]; then
-	_load $(brew --prefix)/etc/bash_completion
+	_load $(brew --prefix)/etc/bash_completion BASH_C_B
 fi
 
 ##### ruby
@@ -41,6 +41,8 @@ _load /etc/profile.d/rvm.sh RVM
 # _load "$HOME/.rvm/scripts/rvm"
 
 # node version manager
-_export NVM_DIR $HOME/.nvm
-_load $NVM_DIR/nvm.sh
+__export NVM_DIR $HOME/.nvm
+# _load $NVM_DIR/nvm.sh NVM
+_loads $NVM_DIR/nvm.sh
 
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
