@@ -1,0 +1,8 @@
+--pager=less -R
+
+--type-set=tpl=tpl,stpl
+--type-set=sass=sass,scss
+--type-set=less=less
+--type-set=conf=conf
+
+# vim: ft=conf
